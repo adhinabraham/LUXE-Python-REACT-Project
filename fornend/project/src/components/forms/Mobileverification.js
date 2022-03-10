@@ -2,6 +2,11 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import {useNavigate} from  'react-router-dom'
+import {message} from 'antd';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 function Mobileverification() {
     const [number,setnumber]=useState('')
@@ -9,6 +14,30 @@ function Mobileverification() {
     const [status,setstatus]=useState(false)
     const [error,seterror]=useState(false)
     const navigate = useNavigate()
+
+    const notificationsuccess=(message)=>{
+      toast.success(''+message, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+
+    const notificationerror=(message)=>{
+      toast.error(''+message, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
    
    
 
@@ -16,13 +45,17 @@ function Mobileverification() {
     const submited=()=>{
         console.log("button clicked ")
         console.log(number)
-        
+       
+       
+
       const  data={"mobile_number":number}
       axios.post('http://127.0.0.1:8000/otp/',data).then((Response)=>{
+        notificationsuccess("otp sent")
         console.log ('this is post')
         setstatus(true) 
         console.log(Response.data) 
     }).catch((e)=>{
+      notificationerror("not a valid number")
       console.log ("this is catch ")
       seterror(true)
 
@@ -47,10 +80,10 @@ function Mobileverification() {
     })
     }
   return (
-    <div className="bg-indigo-50 h-screen ">
+    <div className="bg-slate-50-50 h-screen ">
                 <div className="xl:px-20 md:px-10 pt- sm:px-6 px-4 md:py-12 py-9 2xl:mx-auto 2xl:container md:flex items-center justify-center">
                  
-                    <div className="bg-white shadow-lg  rounded xl:w-1/3 lg:w-5/12 md:w-1/2 w-full lg:px-10 sm:px-6 sm:py-10 px-2 py-6">
+                  <div className="bg-white shadow-lg mt-[200px] pt-80 rounded xl:w-1/3 lg:w-5/12 md:w-1/2 w-full lg:px-10 sm:px-6 sm:py-10 px-2 py-6">
                         <p tabIndex={0} className="focus:outline-none text-2xl font-extrabold leading-6 text-gray-800">
                             Enter your mobile number
                         </p>
@@ -107,10 +140,10 @@ function Mobileverification() {
                            </button>
                           
                           }
-                            {error?
+                            {/* {error?
                 <div className="p-4 mb-4 text-sm text-red-700 bg-red-200-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
                   <span className="font-medium">Not a valid number</span> 
-                </div>:<div></div>}
+                </div>:<div></div>} */}
                         
                          
 

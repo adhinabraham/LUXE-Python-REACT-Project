@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../adminnavbar/Navbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import swal from 'sweetalert';
 
 import Navigation from "../verticalNavigation/Navigation";
 
@@ -19,16 +20,20 @@ function Userlist() {
 
 
   const userdelete=(id)=>{
+   alert ("are you want to change it ")
       axios.get(`http://127.0.0.1:8000/newadmin/useredit/${id}`).then((Response)=>{
        
         setActive(Response.data)
         console.log(Active)
+       
+       
         console.log("this is then")
       }).catch((error)=>{
         console.log("this is flase ")
       })
 
-  }
+  
+}
 
   return (
     <div>

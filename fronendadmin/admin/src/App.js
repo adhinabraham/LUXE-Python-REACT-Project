@@ -23,7 +23,6 @@ function App() {
          <Route path="/addcategory" element={<Addcategory></Addcategory>}/>
          <Route path="/productlist" element={<Productlist></Productlist>}/>
          
-
        </Routes>
      </BrowserRouter>
      </CookiesProvider>

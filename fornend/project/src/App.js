@@ -10,6 +10,7 @@ import Home from './components/body/Home';
 import Showproduct from './components/products/Showproduct';
 import Mobileverification from './components/forms/Mobileverification';
 import {CookiesProvider} from 'react-cookie'
+import Cart from './components/cart/Cart';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
       <Route path='/siginup'  element={<Siginup/>}/>  
       <Route path='/otp' element={<Mobileverification/>}/>
       <Route path='/showproduct/:id' element={<Showproduct/>}/>
+      <Route path='/cart'  element={<Cart/>}/>
       </Routes>
     <Footer/>  
     </BrowserRouter>

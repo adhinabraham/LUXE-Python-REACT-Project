@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../adminnavbar/Navbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import swal from 'sweetalert';
 
 import Navigation from "../verticalNavigation/Navigation";
 
@@ -20,7 +21,12 @@ function Productlist() {
 
 
   const productdelete=(id)=>{
-      alert("want to delet this product")
+    swal({
+      title: "Are you sure?",
+      text: "Are you sure that you want to leave this page?",
+      icon: "warning",
+      dangerMode: true,
+    })
       axios.delete(`http://127.0.0.1:8000/newadmin/productdelete/${id}`).then((Response)=>{
         console.log(Response.data)
        
