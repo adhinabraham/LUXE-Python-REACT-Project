@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../adminnavbar/Navbar";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useCallback} from "react";
 import swal from 'sweetalert';
 
 import Navigation from "../verticalNavigation/Navigation";
@@ -11,35 +11,50 @@ function Productlist() {
   const [productdetails, setproductdetails] = useState([]);
   const [Deleted,setDeleted]=useState()
 
-  useEffect(() => {
-    axios.get("http://127.0.0.1:8000/newadmin/product/").then((Response) => {
-      console.log(Response.data)
+  // useEffect(() => {
+  //   axios.get("http://127.0.0.1:8000/newadmin/product/").then((Response) => {
+  //     console.log(Response.data)
      
-      setproductdetails(Response.data);
-    });
-  }, []);
+  //     setproductdetails(Response.data);
+  //   });
+  // }, []);
+
+ useEffect(() => {
+   getproductdata()
+ }, [])
+ 
+
+  const getproductdata= (()=>{
+    try {
+      const url="http://127.0.0.1:8000/newadmin/product/"
+     axios.get(url).then((Response)=>{
+       console.log(Response.data)
+       setproductdetails(Response.data)
+
+     })
+      
+      
+    } catch (error) {
+      console.log(error.message)
+      
+    }
+
+  })
 
 
   const productdelete=(id)=>{
-    swal({
-      title: "Are you sure?",
-      text: "Are you sure that you want to leave this page?",
-      icon: "warning",
-      dangerMode: true,
-    })
+    if(window.confirm("Are you sure want to delete this product")){
+  
       axios.delete(`http://127.0.0.1:8000/newadmin/productdelete/${id}`).then((Response)=>{
         console.log(Response.data)
        
         setproductdetails(Response.data)
-  
-
-        
         console.log(Deleted)
         console.log("this is then")
       }).catch((error)=>{
         console.log("this is flase ")
       })
-
+    }
   }
 
 

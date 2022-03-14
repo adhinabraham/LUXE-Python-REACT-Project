@@ -33,10 +33,12 @@ function Login() {
       
        const userdata={"username":username,"password":password}
        console.log(userdata)
-       axios.post('http://127.0.0.1:8000/api/token/',userdata).then((Response)=>{
+       axios.post('http://127.0.0.1:8000/user/token/',userdata).then((Response)=>{
            console.log ('this is post ')
            console.log(Response.data)
            setToken('mytoken',Response.data.access)
+           localStorage.setItem("name",Response.data.username)
+           localStorage.setItem("userid",Response.data.id)
            console.log(token["mytoken"])
 
        }).catch((error)=>{

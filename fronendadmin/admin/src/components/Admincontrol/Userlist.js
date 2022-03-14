@@ -20,18 +20,23 @@ function Userlist() {
 
 
   const userdelete=(id)=>{
-   alert ("are you want to change it ")
+
+    if(window.confirm("Are You Sure")){
+
+      
+      
       axios.get(`http://127.0.0.1:8000/newadmin/useredit/${id}`).then((Response)=>{
-       
+        
         setActive(Response.data)
         console.log(Active)
-       
-       
+        
+        
         console.log("this is then")
       }).catch((error)=>{
         console.log("this is flase ")
       })
-
+      
+    }
   
 }
 

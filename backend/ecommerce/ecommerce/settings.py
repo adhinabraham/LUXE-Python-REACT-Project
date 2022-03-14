@@ -43,16 +43,16 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'users',
     'rest_framework.authtoken',
-    "corsheaders",
+    'corsheaders',
     'newadmin',
-    "products",
-    "cart"
+    'products',
+    'cart.apps.CartConfig'
     
 
 ]
 AUTH_USER_MODEL = 'users.MyUser'
 SIMPLE_JWT = {
-     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -168,6 +168,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 
 # Internationalization

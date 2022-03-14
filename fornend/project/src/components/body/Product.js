@@ -2,11 +2,43 @@ import React from 'react'
 import { useEffect,useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 
 
 function Product() {
     const [products,setproducts]=useState([])
+    const userid = localStorage.getItem("userid");
+
+    const notificationsuccess=(message)=>{
+        toast.success(''+message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      }
+  
+      const notificationerror=(message)=>{
+        toast.error(''+message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      }
+     
+
+
 
     useEffect(()=>{
         axios.get('http://127.0.0.1:8000/product/productlist/').then((Response)=>{
@@ -16,6 +48,24 @@ function Product() {
             console.log (error.data)
         })
     },[])
+
+
+
+    const Addcart=(productid)=>{
+
+    const data={ "product_id": productid,"username": userid}
+
+    axios.post('http://127.0.0.1:8000/cart/',data).then((Response)=>{
+        console.log("this is  then ")
+        notificationsuccess("Product Added to cart")
+
+    }).catch((error)=>{
+        console.log("this is catch")
+        notificationerror("something went wrong ..")
+    })
+    }
+   
+
 
      
   return (
@@ -57,7 +107,7 @@ function Product() {
                             <div className=" absolute bottom-0 p-8 w-full opacity-0 group-hover:opacity-100">
                                 <button className=" font-medium text-base leading-4 text-gray-800 bg-white py-3 w-full">
                                    <Link to={`/showproduct/${obj.id}`}>View</Link> </button>
-                                <button className=" bg-transparent font-medium text-base leading-4 border-2 border-white py-3 w-full mt-2 text-white">Add to Cart</button>
+                             <button className=" bg-transparent font-medium text-base leading-4 border-2 border-white py-3 w-full mt-2 text-white" onClick={()=>{Addcart(obj.id)}} >Add to Cart</button>
                             </div>
                         </div>
                         <p className=" font-normal text-xl leading-5 text-gray-800 md:mt-6 mt-4">{obj.productname}</p>

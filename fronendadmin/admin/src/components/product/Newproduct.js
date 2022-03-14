@@ -3,7 +3,11 @@ import Navigation from "../verticalNavigation/Navigation";
 import Navbar from "../adminnavbar/Navbar";
 import { useState,useEffect} from "react";
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 function Newproduct() {
   const [Productname, Setproductname] = useState('');
@@ -15,6 +19,35 @@ function Newproduct() {
   const [description, Setdescription] = useState('');
   const [addcategory,setaddcategory]=useState([])
   const [status,setStatus]=useState('')
+
+  const navigate=useNavigate()
+
+
+  const notificationsuccess=(message)=>{
+    toast.success(''+message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
+
+  const notificationerror=(message)=>{
+    toast.error(''+message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
+ 
+ 
   
 
 
@@ -43,12 +76,15 @@ function Newproduct() {
     
     axios.post('http://127.0.0.1:8000/newadmin/product/',formData)
     .then((Response)=>{
+        navigate("/productlist")
         console.log("this  is catch ")
         console.log(Response.data)
+        notificationsuccess("product add successfullu")
         setStatus(Response.data)
 
     }).catch((error)=>{
         console.log("this is an error")
+        notificationerror("product is not added")
        
     })
     
@@ -268,7 +304,7 @@ function Newproduct() {
                   />
                 </div>
                 <div className="flex items-center justify-start w-full">
-                  <button
+                <button
                     className="focus:outline-none transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm"
                     onClick={data}
                   >
@@ -278,10 +314,10 @@ function Newproduct() {
                     Cancel
                   </button>
                 </div>
-                {status?
+                {/* {status?
                 <div className="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
                   <span className="font-medium">Success alert!</span> submited
-                </div>:<div></div>}
+                </div>:<div></div>} */}
               </div>
             </div>
           </div>

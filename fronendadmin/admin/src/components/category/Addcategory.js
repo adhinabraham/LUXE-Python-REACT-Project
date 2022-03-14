@@ -3,12 +3,28 @@ import Navbar from '../adminnavbar/Navbar'
 import Navigation from '../verticalNavigation/Navigation'
 import {useState} from 'react'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 
 function Addcategory() {
   const [categoryname,setcategoryname]=useState("")
   const [slug,setslug]=useState("")
   const[description,setdescription]=useState("")
+
+  const notificationsuccess=(message)=>{
+    toast.success(''+message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
 
   const form =(e)=>{
     console.log("what is done here")
@@ -17,6 +33,7 @@ function Addcategory() {
     axios.post("http://127.0.0.1:8000/newadmin/category/",value).then((Response)=>{
       console.log("this is then")
       console.log(Response)
+      notificationsuccess("category add successfullu")
       .catch((error)=>{
         console.log("this is error")
 

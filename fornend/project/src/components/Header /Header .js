@@ -12,11 +12,14 @@ function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const[showMenu,setShowMenu]=useState(false)
     const [cookie,setcookie,removecookie]=useCookies(['mytoken'])
+    const saved = localStorage.getItem("name");
 
     const logout=()=>{
         console.log("logout clicked ")
         removecookie(['mytoken'])
         console.log("cookie removed")
+        localStorage. removeItem('name') 
+        localStorage.removeItem("userid")
     }
     return (
   //   
@@ -126,6 +129,7 @@ function Header() {
                           <path d="M14 9C14 10.0609 13.5786 11.0783 12.8284 11.8284C12.0783 12.5786 11.0609 13 10 13C8.93913 13 7.92172 12.5786 7.17157 11.8284C6.42143 11.0783 6 10.0609 6 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                   </a>}
+                  {saved&& <strong className='fill-stroke dark:text-white text-gray-900 font-sans text-xl  hover:subpixel-antialiased 	 uppercase'>{saved}</strong>}
               </div>
               <div className="md:hidden">
                   <button aria-label="open menu" onClick={() => setShowMenu(true)} className="focus:outline-none focus:ring-2 focus:ring-gray-800 rounded">

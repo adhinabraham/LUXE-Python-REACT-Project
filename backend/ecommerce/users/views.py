@@ -14,6 +14,8 @@ from django.contrib import messages
 from twilio.rest import Client
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .private import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_SERVICE_SID
 
@@ -26,7 +28,38 @@ from .private import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_SERVICE_SID
 
 
 # Create your views here.
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    # print("this istoken")
+    # @classmethod
+    # def get_token(cls, user):
+    #     token = super().get_token(user)
 
+    #     # Add custom claims
+    #     token['username'] = user.username
+    #     token['message']="hello world"
+    #     # ...
+
+    #     return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data['username']=self.user.username
+        data['email']=self.user.email
+        data['id']=self.user.id
+
+        # refresh = self.get_token(self.user)
+
+        # data["refresh"] = str(refresh)
+        # data["access"] = str(refresh.access_token)
+
+        # if api_settings.UPDATE_LAST_LOGIN:
+        #     update_last_login(None, self.user)
+
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 # <-------------------------usersiginup view-------------------------->
 class Signup(APIView):
@@ -96,11 +129,20 @@ class Otp(APIView):
     #  return Response('double_varification.html')
      
 class otpverification(APIView):
+    # def get_mobile(self,num):
+    #  try:
+    #         return MyUser.objects.get(mobile_number=num)
+    #  except MyUser.DoesNotExist:
+    #         raise Http404 
+
+
     def post(self,request):
         otp=request.data
         print (otp,"this is otp and and here ...")
         otpcode =otp['otp']
         number=otp['mobile_number']
+        
+        
         usermobile="+91"+number
         print(otpcode)
         # account_sid = os.environ['TWILIO_ACCOUNT_SID']
@@ -116,9 +158,13 @@ class otpverification(APIView):
                                 .create(to=usermobile, code=otpcode)
 
         print(verification_check.status)
-        print ("this is otp verification")
 
-        return Response(status=status.HTTP_202_ACCEPTED)
+        if verification_check.status == 'approved':
+
+          return Response(status=status.HTTP_202_ACCEPTED)
+        else:
+            print ("not a valid otp")
+            return Response(status=status.HTTP_502_BAD_GATEWAY)
 
 
 

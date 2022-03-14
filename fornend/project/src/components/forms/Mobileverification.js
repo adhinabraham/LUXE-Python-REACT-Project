@@ -69,12 +69,14 @@ function Mobileverification() {
       const data={"otp":otpnumber,"mobile_number":number}
       console.log(data)
       axios.post('http://127.0.0.1:8000/otpnumber/',data).then((Response)=>{
+        notificationsuccess("otp verified")
         console.log ('this is post')
         console.log(Response.data) 
         navigate('/login')
-        alert("otp verified")
+      
 
     }).catch((error)=>{
+      notificationerror("Not a valid otp")
       console.log("this is error")
       console.log(error.data)
     })
