@@ -11,7 +11,7 @@ router = DefaultRouter()
 # router.register('',CartView)
 router.register(r'', CartView, basename="cart")
 urlpatterns = router.urls
-urlpatterns += router.urls
+
 
 
 
@@ -21,7 +21,10 @@ urlpatterns += router.urls
 urlpatterns=[
 
     path('usercart/',views.Viewcart.as_view(),name="cartview"),
-     path('', include(router.urls)),
+    path('removeitem/<int:pk>',views.Viewcart.as_view(),name=""),
+     path('additem/',views.AddCart.as_view(),name=""),
+
+    # path('', include(router.urls)),
    
     ]
 

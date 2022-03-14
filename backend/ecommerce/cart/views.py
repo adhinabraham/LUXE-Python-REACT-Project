@@ -1,3 +1,4 @@
+from ast import Delete
 from multiprocessing import AuthenticationError
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -6,119 +7,132 @@ from django.http import JsonResponse
 from rest_framework import status
 from django.http import Http404
 from rest_framework import viewsets
-from .serilazer import MycartSerializer
+from .serilazer import MycartShowSerializer, CartSerializer
 from django.shortcuts import get_object_or_404
-from rest_framework. permissions import IsAuthenticated,IsAdminUser
-from rest_framework.authentication import  BasicAuthentication
+from rest_framework. permissions import IsAuthenticated, IsAdminUser
+from rest_framework.authentication import BasicAuthentication
 
 from .models import Cart
 from products.models import Product
 
 
-
-
-
 # Create your views here.
 class Viewcart(APIView):
-    
-    def post (self,request):
-        data=request.data
-        print ("this is data api view")
-        id=request.data.get("username")
-        
 
-        items=Cart.objects.filter(username=id)
-        serilazer=MycartSerializer(items,many=True, context={'request': request})
-        print(serilazer.data)
+    def post(self, request):
+        data = request.data
+        print("this is data api view")
+        id = request.data.get("username")
 
-      
-        return Response(serilazer.data,status=status.HTTP_201_CREATED)
+        items = Cart.objects.filter(username=id)
+        serilazer = MycartShowSerializer(
+            items, many=True, context={'request': request})
+
+        return Response(serilazer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-        
 
-    # {"product_id":27,
-    # "username":'sayan',
-    # }
+    def delete(self, request, pk):
 
-
-
-class CartView(viewsets.ViewSet):
-
-
-    # def get_permissions(self):
-   
-    #     if self.action == 'list':
-    #         permission_classes = [IsAuthenticated]
-    #     else:
-    #         permission_classes = [IsAdminUser]
-    #     return [permission() for permission in permission_classes]
+        print("this is deleting item")
+        item = Cart.objects.get(id=pk)
+        item.delete()
+        print("item deleted")
+        return Response("deleted", status=status.HTTP_202_ACCEPTED)
 
 
+class AddCart(APIView):
+
+    def post(self, request):
+        print("request come in add cart ")
+        product_id = request.data["product_id"]
+        user_id = request.data["username"]
+
+        try:
+
+            print(user_id)
+            print(product_id)
+            product_available = Cart.objects.get(
+                product_id=product_id, username=user_id)
+            print(product_available)
+            print("priduct available, going to addd")
+        except:
+            print("product not availablale")
+            print("new product is adding ")
+
+            product = Product.objects.get(id=product_id)
+            data = {"product_id": product_id, "user_id": user_id,"product_stock":1,"sub_total":product.price}
+
+            serilazerproduct = CartSerializer(data=data)
+
+            print(serilazerproduct)
+            if serilazerproduct.is_valid():
+                print("product is vaid ")
+               
+                serilazerproduct.save()
+
+                return Response({"message": " new product is add to cart "})
+            return Response({"message": " some error "})
+
+        if product_available:
+            print('product found, adding quantity')
+
+            print(product_available.product_stock, "before adding")
+
+            product_available.product_stock = product_available.product_stock+1
+            product_available.sub_total = product_available.product_stock * \
+                product_available.product_id.price
+            product_available.save()
+            print(product_available.product_stock, "after adding")
+            return Response({'message': 'product qty added'})
 
 
+# class CartView(viewsets.ViewSet):
 
+#     # def get_permissions(self):
 
-    def list(self, request):
-        print (request.data,"this is post")
+#     #  if self.action == 'list':
+#     #     permission_classes = [IsAuthenticated]
+#     #     print("is authinecated")
+#     #  else:
+#     #     permission_classes = [IsAuthenticated]
+#     #  return [permission() for permission in permission_classes]
 
-        queryset = Cart.objects.all()
-        serializer = MycartSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
+#     def list(self, request):
+#         print(request.data, "this is post")
 
+#         queryset = Cart.objects.all()
+#         serializer = CartSerializer(
+#             queryset, many=True, context={'request': request})
+#         return Response(serializer.data)
 
+#     # def retrieve(self, request, pk=None):
+#     #     print (request.data,'this is form data')
 
-    def retrieve(self, request, pk=None):
-        print (request.data,'this is form data')
+#     #     queryset = Cart.objects.all()
+#     #     items = get_object_or_404(queryset, pk=pk)
+#     #     serializer = CartSerializer(items)
+#     #     return Response(serializer.data)
 
-        queryset = Cart.objects.all()
-        items = get_object_or_404(queryset, pk=pk)
-        serializer = MycartSerializer(items)
-        return Response(serializer.data)
+#     def destroy(self, request, pk=None):
+#         print("this is deleting function ")
+#         queryset = get_object_or_404(Cart, id=pk).delete()
+#         return Response({'message': 'delete success'})
 
+#     def create(self, request):
+#         print('add to cart in viewset')
+#         print(request.data)
+#         product = request.data["product_id"]
+#         item = Cart.objects.filter(id=product)
+#         print(item)
 
-    # def post(self, request, pk=None):
-    #     # permission_classes = [IsAuthenticated]
-    #     # authentication_classes=[BasicAuthentication]
-    #     print("this is retrive")
-    #     print(self.request.user)
-    #     queryset = Cart.objects.filter(username=request.user)
-    #     user = get_object_or_404(queryset, )
-    #     serializer = MycartSerializer(user)
-    #     return Response(serializer.data)
-
-
-
-
-    # def list(self, request,pk):
-    #     print (pk)
-    #     print("this is request",request.user.id)
-    #     queryset = Cart.objects.filter(id=pk)
-    #     serializer = MycartSerializer(queryset,many=True , context={'request': request})
-    #     return Response(serializer.data)
-
-        # queryset = Cart.objects.all()
-        # user = get_object_or_404(queryset, id=pk)
-        # serializer = MycartSerializer(user)
-        # return Response(serializer.data)
-
-
-
-    def create(self, request):
-        print('add to cart in viewset')
-        print(request.data)
-     
-        serializer = MycartSerializer(data=request.data)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-            print("data is added  to cart")
-            return Response({'message':'success','data':serializer.data})
-        return Response({'message':'error','data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
+#         # serializer = CartSerializer(data=request.data)
+#         # print(serializer)
+#         # if serializer.is_valid():
+#         #     serializer.save()
+#         #     print("data is added  to cart")
+#         #     return Response({'message':'success','data':serializer.data})
+#         # return Response({'message':'error','data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response("this is product item ")
 
 
 # {"product_id":{"product":27},"username":31}

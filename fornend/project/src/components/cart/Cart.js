@@ -8,10 +8,29 @@ function Cart() {
   const [cartitems, setcartitems] = useState("");
   const userid = localStorage.getItem("userid");
 
+
+
+
+const getitem=()=>{
+  const name={"username":userid}
+  axios
+    .post("http://127.0.0.1:8000/cart/usercart/",name)
+    .then((Response) => {
+      console.log(Response.data);
+      setcartitems(Response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+ 
+
+}
+
+
   useEffect(() => {
     const name={"username":userid}
     axios
-      .post("http://127.0.0.1:8000/cart/cartview/",name)
+      .post("http://127.0.0.1:8000/cart/usercart/",name)
       .then((Response) => {
         console.log(Response.data);
         setcartitems(Response.data);
@@ -20,6 +39,21 @@ function Cart() {
         console.log(error);
       });
   }, []);
+
+
+  const removeitem=(id)=>{
+    console.log (id)
+    console.log("this is  remove the item");
+    // const url = "http://127.0.0.1:8000/cart/"+id;
+    axios.delete(`http://127.0.0.1:8000/cart/removeitem/${id}`).then((Response)=>{
+      console.log(Response.data)
+      getitem()
+      console.log("this is then")
+    }).catch((error)=>{
+      console.log("this is error")
+    })
+    
+  }
 
   return (
     <div>
@@ -100,7 +134,7 @@ function Cart() {
                               <p className="text-xs leading-3 underline text-gray-800 cursor-pointer">
                                 Add to favorites
                               </p>
-                              <p className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer">
+                              <p className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer" onClick={()=>{removeitem(obj.id)}}>
                                 Remove
                               </p>
                             </div>

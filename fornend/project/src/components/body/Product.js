@@ -55,7 +55,7 @@ function Product() {
 
     const data={ "product_id": productid,"username": userid}
 
-    axios.post('http://127.0.0.1:8000/cart/',data).then((Response)=>{
+    axios.post('http://127.0.0.1:8000/cart/additem/',data).then((Response)=>{
         console.log("this is  then ")
         notificationsuccess("Product Added to cart")
 
