@@ -5,32 +5,32 @@ import axios from "axios";
 
 function Cart() {
   const navigate = useNavigate();
-  const [cartitems, setcartitems] = useState("");
+  const [cartitems, setcartitems] = useState([]);
+  const [total,settotal]=useState([])
+  
+
+
+  
   const userid = localStorage.getItem("userid");
+  
 
-
-
-
-const getitem=()=>{
-  const name={"username":userid}
-  axios
-    .post("http://127.0.0.1:8000/cart/usercart/",name)
-    .then((Response) => {
-      console.log(Response.data);
-      setcartitems(Response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
- 
-
-}
-
+  const getitem = () => {
+    const name = { username: userid };
+    axios
+      .post("http://127.0.0.1:8000/cart/usercart/", name)
+      .then((Response) => {
+        console.log(Response.data);
+        setcartitems(Response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
-    const name={"username":userid}
+    const name = { username: userid };
     axios
-      .post("http://127.0.0.1:8000/cart/usercart/",name)
+      .post("http://127.0.0.1:8000/cart/usercart/", name)
       .then((Response) => {
         console.log(Response.data);
         setcartitems(Response.data);
@@ -41,19 +41,93 @@ const getitem=()=>{
   }, []);
 
 
-  const removeitem=(id)=>{
-    console.log (id)
+
+  useEffect(() => {
+    let grandtotal1=0
+      cartitems.forEach(element => {
+        grandtotal1=grandtotal1+element.sub_total
+    });
+    settotal(grandtotal1)
+    
+
+   
+  }, [cartitems])
+  const carttotal=total+60
+
+  localStorage.setItem("carttotal",carttotal)
+  
+
+
+  const removeitem = (id) => {
+    console.log(id);
     console.log("this is  remove the item");
     // const url = "http://127.0.0.1:8000/cart/"+id;
-    axios.delete(`http://127.0.0.1:8000/cart/removeitem/${id}`).then((Response)=>{
+    axios
+      .delete(`http://127.0.0.1:8000/cart/removeitem/${id}`)
+      .then((Response) => {
+        console.log(Response.data);
+        getitem();
+        console.log("this is then");
+      })
+      .catch((error) => {
+        console.log("this is error");
+      });
+  };
+
+  const countincrease = (stock, product_id) => {
+   
+   
+    console.log("this is product add button");
+    const product_stock = stock;
+    const prod_id = product_id;
+    console.log(prod_id);
+    const name = userid;
+    const action = "add";
+    const data = {
+      product_id: prod_id,
+      user_id: name,
+      product_stock: product_stock,
+      action: "add",
+    };
+
+    console.log("this is increase");
+    axios.patch("http://127.0.0.1:8000/cart/additem/",data).then((Response)=>{
+      console.log("this is then")
       console.log(Response.data)
       getitem()
-      console.log("this is then")
     }).catch((error)=>{
       console.log("this is error")
     })
+  };
+
+  const countdecrease = (stock, product_id) => {
     
-  }
+    
+
+    console.log(stock, "this is stock");
+
+    console.log("this is product add button");
+    const product_stock = stock;
+    const prod_id = product_id;
+    console.log(prod_id);
+    const name = userid;
+    const action = "not add";
+    const data = {
+      product_id: prod_id,
+      user_id: name,
+      product_stock: product_stock,
+      action: "not added",
+    };
+
+    console.log("this is decrease");
+    axios.patch("http://127.0.0.1:8000/cart/additem/",data).then((Response)=>{
+      console.log("this is then")
+      console.log(Response.data)
+      getitem()
+    }).catch((error)=>{
+      console.log("this is error")
+    })
+  };
 
   return (
     <div>
@@ -99,7 +173,7 @@ const getitem=()=>{
                 <p className="text-5xl font-black leading-10 text-gray-800 pt-3">
                   Bag
                 </p>
-                {cartitems &&
+                {cartitems ?
                   cartitems.map((obj, id) => {
                     return (
                       <div className="md:flex items-center mt-14 py-8 border-t border-gray-200">
@@ -115,15 +189,13 @@ const getitem=()=>{
                             RF293
                           </p>
                           <div className="flex items-center justify-between w-full pt-1">
-                            
                             <p className="text-base font-black leading-none text-gray-800">
                               {obj.products}
                             </p>
-                            <select className="py-2 px-1 border border-gray-200 mr-6 focus:outline-none">
-                              <option>01</option>
-                              <option>02</option>
-                              <option>03</option>
-                            </select>
+                            <button className="py-2 px-1 border border-gray-200 mr-6 focus:outline-none">
+                              {/* <option>03</option> */}
+                              {obj.product_stock}
+                            </button>
                           </div>
 
                           <p className="w-96 text-xs leading-3 text-gray-600">
@@ -134,37 +206,55 @@ const getitem=()=>{
                               <p className="text-xs leading-3 underline text-gray-800 cursor-pointer">
                                 Add to favorites
                               </p>
-                              <p className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer" onClick={()=>{removeitem(obj.id)}}>
+                              <p
+                                className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer"
+                                onClick={() => {
+                                  removeitem(obj.id);
+                                }}
+                              >
                                 Remove
+                              </p>
+                              <p className="text-xs leading-3 underline text-red-500 pl-5 cursor-pointer">
+                                cart-quantity{obj.product_stock}
                               </p>
                             </div>
                             <p className="text-base font-black leading-none text-gray-800">
-                              ${obj.price}
+                              ${obj.sub_total}
                             </p>
                           </div>
+                         
 
                           <button
-                              data-action="decrement"
-                              className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none"
-                            >
-                              <span className="m-auto text-2xl font-thin">−</span>
-                            </button>
-                            <input
-                              type="number"
-                              className="focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
-                              name="custom-input-number"
-                              value="0"
-                            ></input>
-                            <button
-                              data-action="increment"
-                              className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer"
-                            >
-                              <span class="m-auto text-2xl font-thin">+</span>
-                            </button>
+                            data-action="decrement"
+                            className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none"
+                            onClick={() => {
+                              countdecrease(obj.product_stock, obj.product_id);
+                            }}
+                          >
+                            <span className="m-auto text-2xl font-thin">−</span>
+                          </button>
+
+                          <input
+                            className="focus:outline-none text-center w-20 bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none"
+                            name="custom-input-number"
+                            value={obj.product_stock}
+                          ></input>
+                          <button
+                            data-action="increment"
+                            className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer"
+                            onClick={() => {
+                              countincrease(obj.product_stock, obj.product_id);
+                            }}
+                          >
+                            <span class="m-auto text-2xl font-thin">+</span>
+                          </button>
                         </div>
                       </div>
                     );
-                  })}
+                  })
+                  :
+                  <h1>no item in cart </h1>}
+                
 
                 {/* <div className="md:flex items-center py-8 border-t border-b border-gray-200">
                                         <div className="h-full w-1/4">
@@ -193,7 +283,7 @@ const getitem=()=>{
                                         </div>
                                     </div> */}
               </div>
-              <div className="xl:w-1/2 md:w-1/3 xl:w-1/4 w-full bg-gray-100 h-full">
+              <div className=" md:w-1/3 xl:w-1/4 w-full bg-gray-100 h-full">
                 <div className="flex flex-col md:h-screen px-14 py-20 justify-between overflow-y-auto">
                   <div>
                     <p className="text-4xl font-black leading-9 text-gray-800">
@@ -204,7 +294,7 @@ const getitem=()=>{
                         Subtotal
                       </p>
                       <p className="text-base leading-none text-gray-800">
-                        $10000
+                       ${total}
                       </p>
                     </div>
                     <div className="flex items-center justify-between pt-5">
@@ -212,17 +302,17 @@ const getitem=()=>{
                         Shipping
                       </p>
                       <p className="text-base leading-none text-gray-800">
-                        $30
+                        $60
                       </p>
                     </div>
-                    <div className="flex items-center justify-between pt-5">
+                    {/* <div className="flex items-center justify-between pt-5">
                       <p className="text-base leading-none text-gray-800">
                         Tax
                       </p>
                       <p className="text-base leading-none text-gray-800">
                         $35
                       </p>
-                    </div>
+                    </div> */}
                   </div>
                   <div>
                     <div className="flex items-center pb-6 justify-between lg:pt-5 pt-20">
@@ -230,13 +320,12 @@ const getitem=()=>{
                         Total
                       </p>
                       <p className="text-2xl font-bold leading-normal text-right text-gray-800">
-                        $10,240
+                       {total+60}
                       </p>
                     </div>
                     <button
-                      onClick=""
-                      className="text-base leading-none w-full py-5 bg-gray-800 border-gray-800 border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 text-white"
-                    >
+                      onClick={()=>{navigate("/shipping")}}
+                      className="text-base leading-none w-full py-5 bg-gray-800 border-gray-800 border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 text-white"  >
                       Checkout
                     </button>
                   </div>

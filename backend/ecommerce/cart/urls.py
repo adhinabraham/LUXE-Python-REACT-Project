@@ -1,16 +1,16 @@
 from django.urls import path
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views import CartView
+# from .views import CartView
 from django.urls import include
 
 
 
 
-router = DefaultRouter()
-# router.register('',CartView)
-router.register(r'', CartView, basename="cart")
-urlpatterns = router.urls
+# router = DefaultRouter()
+# # router.register('',CartView)
+# router.register(r'', CartView, basename="cart")
+# urlpatterns = router.urls
 
 
 

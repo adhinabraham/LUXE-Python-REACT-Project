@@ -16,7 +16,7 @@ class MycartShowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['username','id','products','product_stock','price','sub_total','image_url']
+        fields = ['username','id','product_id','products','product_stock','price','sub_total','image_url']
 
 
 class CartSerializer(serializers.ModelSerializer):

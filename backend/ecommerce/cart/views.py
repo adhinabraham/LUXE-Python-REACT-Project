@@ -20,6 +20,7 @@ from products.models import Product
 class Viewcart(APIView):
 
     def post(self, request):
+        print("this is  view of cart ")
         data = request.data
         print("this is data api view")
         id = request.data.get("username")
@@ -46,6 +47,7 @@ class AddCart(APIView):
         print("request come in add cart ")
         product_id = request.data["product_id"]
         user_id = request.data["username"]
+        print (user_id)
 
         try:
 
@@ -60,7 +62,7 @@ class AddCart(APIView):
             print("new product is adding ")
 
             product = Product.objects.get(id=product_id)
-            data = {"product_id": product_id, "user_id": user_id,"product_stock":1,"sub_total":product.price}
+            data = {"product_id": product_id, "username": user_id,"product_stock":1,"sub_total":product.price}
 
             serilazerproduct = CartSerializer(data=data)
 
@@ -84,6 +86,57 @@ class AddCart(APIView):
             product_available.save()
             print(product_available.product_stock, "after adding")
             return Response({'message': 'product qty added'})
+
+    def patch(self,request):
+        print("this is patch method")
+        print(request.data)
+        print("this is product data items")
+        product_id=request.data["product_id"]
+        userid=request.data["user_id"]
+        action=request.data["action"]
+        product_stock=request.data["product_stock"]
+        print(product_id,userid,product_stock,action)
+        product_item=Cart.objects.get(product_id=product_id,username=userid)
+        print(product_item,"this is product item")
+
+        if action =="add":
+     
+      
+            
+            print(product_item)
+            print(product_item.product_stock,"product stock ")
+            product_item.product_stock=product_item.product_stock+1
+            product_item.sub_total= product_item.product_stock * product_item.product_id.price
+            product_item.save()
+            print(product_item.product_stock,"add stock")
+            print("this is successfull compled ")
+            return Response ("stock added")
+        
+        else:
+           if product_item.product_stock >1:
+              print(product_item.product_stock,"product stock ")
+              product_item.product_stock=product_item.product_stock-1
+              product_item.sub_total= product_item.product_stock * product_item.product_id.price
+              product_item.save()
+              print(product_item.product_stock,"add stock")
+              print("this is succesfully decresed")
+              return Response("stock decreased")
+
+           else :
+                return Response (" item can't removed ")
+
+    def put(self, request ):
+        print ("delete function in cart ")
+        print(request.data)
+        userid = request.data["userid"]
+        print(userid)
+        items = Cart.objects.filter(username=userid)
+        items.delete()
+        print("items all are deleted ")
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+# {"product_id":28,"user_id":31,"product_stock":4,"action":"add"}
+
 
 
 # class CartView(viewsets.ViewSet):

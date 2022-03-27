@@ -31,7 +31,7 @@ function Login() {
             return
         }
         console.log("buttton clicked ")
-        axios.post('http://127.0.0.1:8000/api/token/',data).then((Response)=>{
+        axios.post('http://127.0.0.1:8000/user/token/',data).then((Response)=>{
             console.log(Response.data)
             setToken('mytoken',Response.data.access)
             navigate("/Listuser")

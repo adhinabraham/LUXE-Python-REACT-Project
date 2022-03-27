@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'newadmin',
     'products',
+    'order',
     'cart.apps.CartConfig'
     
 

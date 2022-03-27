@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Carosal from "./Carosal";
 
 toast.configure();
 
@@ -69,7 +70,8 @@ function Product() {
 
      
   return (
-    <div>
+      <div>
+          {/* <Carosal/> */}
 
 <div className=" 2xl:container 2xl:mx-auto">
             <div className=" bg-gray-50 text-center lg:py-10 md:py-8 py-6">

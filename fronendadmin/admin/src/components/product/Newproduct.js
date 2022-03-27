@@ -19,8 +19,16 @@ function Newproduct() {
   const [description, Setdescription] = useState('');
   const [addcategory,setaddcategory]=useState([])
   const [status,setStatus]=useState('')
+  const [srcImg, setSrcImg] = useState(null);
 
   const navigate=useNavigate()
+
+
+  const handleImage = async (event) => {
+    setSrcImg(URL.createObjectURL(event.target.files[0]));
+    console.log(event.target.files[0]);
+};
+
 
 
   const notificationsuccess=(message)=>{
@@ -149,8 +157,9 @@ function Newproduct() {
                                         focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                       type="file"
                       id="formFile"
+                   
                       onChange={(e) => {
-                        Setimg1(e.target.files[0]);
+                         Setimg1(e.target.files[0]);
                       }}
                     ></input>
                   </div>

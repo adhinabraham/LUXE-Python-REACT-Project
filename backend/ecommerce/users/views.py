@@ -167,10 +167,33 @@ class otpverification(APIView):
             return Response(status=status.HTTP_502_BAD_GATEWAY)
 
 
-
+class Userprofile(APIView):
+    def post (self,request):
+        print ("user profile")
+        userid=request.data["id"]
+        user=MyUser.objects.get(id=userid)
+        print (user)
+        userserial=MyUserSerializer(user)
+       
+        return Response (userserial.data)
   
     
     # twilio code for otp generation
+
+
+    def patch(self,request):
+        print ("user edit profile ")
+        userid=request.data["id"]
+        print (userid)
+        user = MyUser.objects.get(id=userid)
+        user.username=request.data['username']
+        user.email=request.data['email']
+        user.mobile_number=request.data['phone']
+        user.save ()
+        print("data is saved ")
+        
+        return Response ("this is saved userdata")
+
  
 
    
